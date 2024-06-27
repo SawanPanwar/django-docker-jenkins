@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "django_simple:latest"
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git url: 'https://github.com/your-repo.git', branch: 'main' // Update with your repository details
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build(DOCKER_IMAGE, '.')
+                }
+            }
+        }
+
+        stage('Deploy Using Docker Compose') {
+            steps {
+                script {
+                    // Bring down any existing containers
+                    sh 'docker-compose down'
+
+                    // Bring up the services using Docker Compose
+                    sh 'docker-compose up -d --build'
+                }
+            }
+        }
+    }
+}
