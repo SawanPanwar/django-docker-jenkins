@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/SawanPanwar/django-docker-jenkins.git', branch: 'main' // Update with your repository details
+                git url: 'https://github.com/SawanPanwar/django-docker-jenkins.git', branch: 'main'
             }
         }
 
@@ -28,23 +28,10 @@ pipeline {
                 script {
                     dir('SOS') {
                         // Bring down any existing containers
-                        sh 'docker-compose down || docker-compose.exe down'
+                        bat 'docker-compose down || docker-compose.exe down'
 
                         // Bring up the services using Docker Compose
-                        sh 'docker-compose up -d --build || docker-compose.exe up -d --build'
-                    }
-                }
-            }
-
-        stage('Deploy Using Docker Compose') {
-            steps {
-                script {
-                    dir('SOS') {
-                         // Bring down any existing containers
-                         sh 'docker-compose down'
-
-                         // Bring up the services using Docker Compose
-                         sh 'docker-compose up -d --build'
+                        bat 'docker-compose up -d --build || docker-compose.exe up -d --build'
                     }
                 }
             }
