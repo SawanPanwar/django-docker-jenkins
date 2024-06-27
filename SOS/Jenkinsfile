@@ -15,7 +15,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE, '.')
+                    // Ensure we are in the correct directory before building the Docker image
+                    dir('SOS') {
+                        docker.build(DOCKER_IMAGE, '.')
+                    }
                 }
             }
         }
@@ -23,11 +26,26 @@ pipeline {
         stage('Deploy Using Docker Compose') {
             steps {
                 script {
-                    // Bring down any existing containers
-                    sh 'docker-compose down'
+                    dir('SOS') {
+                        // Bring down any existing containers
+                        sh 'docker-compose down || docker-compose.exe down'
 
-                    // Bring up the services using Docker Compose
-                    sh 'docker-compose up -d --build'
+                        // Bring up the services using Docker Compose
+                        sh 'docker-compose up -d --build || docker-compose.exe up -d --build'
+                    }
+                }
+            }
+
+        stage('Deploy Using Docker Compose') {
+            steps {
+                script {
+                    dir('SOS') {
+                         // Bring down any existing containers
+                         sh 'docker-compose down'
+
+                         // Bring up the services using Docker Compose
+                         sh 'docker-compose up -d --build'
+                    }
                 }
             }
         }
