@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "django_simple:latest"
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
@@ -12,25 +8,11 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Ensure we are in the correct directory before building the Docker image
-                    dir('SOS') {
-                        docker.build(DOCKER_IMAGE, '.')
-                    }
-                }
-            }
-        }
-
         stage('Deploy Using Docker Compose') {
             steps {
                 script {
                     dir('SOS') {
-                        // Bring down any existing containers
                         bat 'docker-compose down || docker-compose.exe down'
-
-                        // Bring up the services using Docker Compose
                         bat 'docker-compose up -d --build || docker-compose.exe up -d --build'
                     }
                 }
